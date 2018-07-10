@@ -1,0 +1,14 @@
+citEntry(
+  header = "To cite \'banter\' in publications use:",
+  textVersion = "Rankin, S., Archer, F., Keating, J. L., Oswald, J. N., Oswald, M., Curtis, A. and Barlow, J. (2017) Acoustic classification of dolphins in the California Current using whistles, echolocation clicks, and burst pulses. Mar Mam Sci, 33: 520-540. doi:10.1111/mms.12381",
+  entry = "Article",
+  author = "Shannon Rankin and Frederick Archer and Jennifer L. Keating and Julie N. Oswald and Michael Oswald and Alex Curtis and Jay Barlow",
+  year = "2017",
+  title = "Acoustic classification of dolphins in the California Current using whistles, echolocation clicks, and burst pulses",
+  journal = "Marine Mammal Science",
+  volume = "33",
+  number = "2",
+  pages = "520-540",
+  doi = "10.1111/mms.12381",
+  url = "https://onlinelibrary.wiley.com/doi/abs/10.1111/mms.12381"
+)
