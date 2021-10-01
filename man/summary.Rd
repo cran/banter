@@ -2,17 +2,20 @@
 % Please edit documentation in R/summary.R
 \name{summary}
 \alias{summary}
-\alias{summary}
 \alias{summary.banter_model}
-\alias{summary}
 \alias{summary,banter_model-method}
 \title{BANTER Classifier Model Summary}
 \usage{
-\method{summary}{banter_model}(object, model = "event", n = 0.1,
-  bins = 20, ...)
+summary(object, ...)
+
+\method{summary}{banter_model}(object, model = "event", n = 0.1, bins = 20, ...)
+
+\S4method{summary}{banter_model}(object, model = "event", n = 0.1, bins = 20, ...)
 }
 \arguments{
 \item{object}{a \code{\link{banter_model}} object.}
+
+\item{...}{ignored.}
 
 \item{model}{name of model to summarize. Default is \code{"event"} 
 to summarize the event-level model. Can also be name of a detector.}
@@ -21,8 +24,6 @@ to summarize the event-level model. Can also be name of a detector.}
 between 0 and 1 is taken as a proportion of chain.}
 
 \item{bins}{number of bins in inbag histogram.}
-
-\item{...}{ignored.}
 }
 \value{
 In the plot that is created, the upper panel shows the trace of the 
@@ -47,6 +48,12 @@ bant.mdl <- addBanterDetector(
 bant.mdl <- runBanterModel(bant.mdl, ntree = 1000, sampsize = 1)
 summary(bant.mdl)
 
+}
+\references{
+Rankin, S. , Archer, F. , Keating, J. L., Oswald, J. N., 
+  Oswald, M. , Curtis, A. and Barlow, J. (2017), Acoustic classification 
+  of dolphins in the California Current using whistles, echolocation clicks,
+  and burst pulses. Marine Mammal Science 33:520-540. doi:10.1111/mms.12381
 }
 \author{
 Eric Archer \email{eric.archer@noaa.gov}

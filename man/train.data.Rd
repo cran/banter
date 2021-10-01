@@ -4,7 +4,9 @@
 \name{train.data}
 \alias{train.data}
 \title{Training events and detectors}
-\format{list}
+\format{
+list
+}
 \usage{
 data(train.data)
 }

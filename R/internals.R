@@ -1,3 +1,21 @@
+#' Checks to make sure 'x' contains syntactically valid and unique characters
+#' @rdname internals
+#' @keywords internal
+#' 
+.checkValidStrings <- function(x, label) {
+  x.valid <- make.names(x)
+  not.valid <- x[x != make.names(x, unique = TRUE)]
+  if(length(not.valid) > 0) {
+    stop(
+      "the following values are not valid or are not unique in ",
+      label, " : ", paste(not.valid, collapse = ", "),
+      ". Use the `make.names()` function to convert.",
+      call. = FALSE
+    )
+  }
+  invisible(NULL)
+}
+
 #' Checks to make sure 'model' is a valid model name
 #' x is a banter_model object
 #' @rdname internals
@@ -26,7 +44,6 @@
 #' x is a vector of species or table of species frequencies
 #' n is desired sample size
 #' @name internals
-#' @importFrom stats setNames
 #' @keywords internal
 #' 
 .getSampsize <- function(x, n, warn.label) {
@@ -62,9 +79,9 @@
       paste0("  ", names(good.freq), ": ", good.freq, "\n", collapse = ""), 
       call. = FALSE, immediate. = TRUE
     ) 
-    setNames(rep(n, length(good.freq)), names(good.freq))
+    stats::setNames(rep(n, length(good.freq)), names(good.freq))
   } else {
-    setNames(rep(n, length(freq)), names(freq))
+    stats::setNames(rep(n, length(freq)), names(freq))
   }
 }
 
@@ -74,15 +91,19 @@
 #' @keywords internal
 #' 
 .meanVotes <- function(x) {
-  sapply(names(x), function(d) {
+  df <- sapply(names(x), function(d) {
     x[[d]] %>% 
-      tidyr::gather("species", "prob", -.data$event.id) %>% 
+      tidyr::pivot_longer(
+        -.data$event.id,
+        names_to = "species", 
+        values_to = "prob"
+      ) %>% 
       dplyr::mutate(species = paste0(d, ".", .data$species)) %>% 
       dplyr::group_by(.data$event.id, .data$species) %>% 
-      dplyr::summarize(prob.mean = mean(.data$prob)) %>% 
-      dplyr::ungroup() 
+      dplyr::summarize(prob.mean = mean(.data$prob), .groups = "drop") 
   }, simplify = FALSE) %>% 
     dplyr::bind_rows() %>% 
-    tidyr::spread("species", "prob.mean") %>% 
-    replace(is.na(.), 0) 
+    tidyr::pivot_wider(names_from = "species", values_from = "prob.mean") 
+  
+  replace(df, is.na(df), 0)
 }

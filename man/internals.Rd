@@ -2,6 +2,7 @@
 % Please edit documentation in R/addBanterDetector.R, R/internals.R, R/summary.R
 \name{.rfFuncDetector}
 \alias{.rfFuncDetector}
+\alias{.checkValidStrings}
 \alias{.checkModelName}
 \alias{.stopIfNoDetectors}
 \alias{internals}
@@ -11,6 +12,8 @@
 \title{Detector randomForest function}
 \usage{
 .rfFuncDetector(params)
+
+.checkValidStrings(x, label)
 
 .checkModelName(x, model)
 
@@ -24,6 +27,8 @@
 }
 \description{
 Detector randomForest function
+
+Checks to make sure 'x' contains syntactically valid and unique characters
 
 Checks to make sure 'model' is a valid model name
 x is a banter_model object

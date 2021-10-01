@@ -1,11 +1,17 @@
 #' @name numCalls
 #' @title Number and Proportion of Calls
-#' @description Number and proportion of calls in BANTER detector models
+#' @description Return the number and proportion of calls in BANTER detector 
+#'   models.
 #' 
 #' @param x a \code{\link{banter_model}} object.
 #' @param by return summary by \code{"species"} or \code{"event"}.
 #' 
 #' @author Eric Archer \email{eric.archer@@noaa.gov}
+#' 
+#' @references Rankin, S. , Archer, F. , Keating, J. L., Oswald, J. N., 
+#'   Oswald, M. , Curtis, A. and Barlow, J. (2017), Acoustic classification 
+#'   of dolphins in the California Current using whistles, echolocation clicks, 
+#'   and burst pulses. Marine Mammal Science 33:520-540. doi:10.1111/mms.12381
 #' 
 #' @examples
 #' data(train.data)
@@ -27,27 +33,22 @@
 #' propCalls(bant.mdl, "species")
 #' propCalls(bant.mdl, "event")
 #' 
-#' @importFrom dplyr n
-#' @importFrom magrittr %>%
-#' @importFrom plyr .
-#' @importFrom rlang .data
-#' 
 #' @export
 #' 
 numCalls <- function(x, by = c("species", "event")) {
   if(is.null(x@detectors)) stop("no detectors loaded in model.")
   by <- switch(match.arg(by), species = "species", event = "event.id")
-  lapply(names(x@detectors), function(d) {
+  df <- lapply(names(x@detectors), function(d) {
     x@data %>% 
       dplyr::left_join(x@detectors[[d]]@ids, by = "event.id") %>% 
-      dplyr::group_by(.dots = by) %>% 
-      dplyr::summarize(n = sum(!is.na(.data$call.id))) %>% 
-      dplyr::ungroup() %>% 
+      dplyr::group_by(dplyr::across(by)) %>% 
+      dplyr::summarize(n = sum(!is.na(.data$call.id)), .groups = "drop") %>% 
       dplyr::mutate(detector = paste0("num.", d))
   }) %>%
     dplyr::bind_rows() %>% 
-    tidyr::spread("detector", "n") %>% 
-    replace(is.na(.), 0) %>% 
+    tidyr::pivot_wider(names_from = "detector", values_from = "n")
+  
+  replace(df, is.na(df), 0) %>% 
     as.data.frame()
 }
 
@@ -58,12 +59,16 @@ propCalls <- function(x, by = c("species", "event")) {
   df <- numCalls(x, by)
   by <- colnames(df)[1]
   df %>% 
-    tidyr::gather("detector", "n", -by) %>% 
-    dplyr::group_by(.dots = by) %>%
-    dplyr::mutate(prop = n / sum(n, na.rm = TRUE)) %>% 
+    tidyr::pivot_longer(
+      -dplyr::all_of(by),
+      names_to = "detector", 
+      values_to = "n"
+    ) %>% 
+    dplyr::group_by(dplyr::across(by)) %>%
+    dplyr::mutate(prop = .data$n / sum(.data$n, na.rm = TRUE)) %>% 
     dplyr::ungroup() %>% 
     dplyr::select(-.data$n) %>% 
     dplyr::mutate(detector = gsub("num.", "prop.", .data$detector)) %>% 
-    tidyr::spread("detector", "prop") %>% 
+    tidyr::pivot_wider(names_from = "detector", values_from = "prop") %>% 
     as.data.frame()
 }

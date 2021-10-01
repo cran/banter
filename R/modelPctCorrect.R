@@ -9,6 +9,11 @@
 #' 
 #' @author Eric Archer \email{eric.archer@@noaa.gov}
 #' 
+#' @references Rankin, S. , Archer, F. , Keating, J. L., Oswald, J. N., 
+#'   Oswald, M. , Curtis, A. and Barlow, J. (2017), Acoustic classification 
+#'   of dolphins in the California Current using whistles, echolocation clicks,
+#'   and burst pulses. Marine Mammal Science 33:520-540. doi:10.1111/mms.12381
+#' 
 #' @examples
 #' data(train.data)
 #' # initialize BANTER model with event data
@@ -22,16 +27,14 @@
 #' bant.mdl <- runBanterModel(bant.mdl, ntree = 1000, sampsize = 1)
 #' modelPctCorrect(bant.mdl)
 #' 
-#' @importFrom magrittr %>%
-#' @importFrom rlang .data
-#' 
 #' @export
 #' 
 modelPctCorrect <- function(x) {
   # check that detectors are present
   if(is.null(x@detectors)) return(NULL)
+  spp <- sort(unique(x@data$species))
   
-  # creat list of data.frames for each detector
+  # create list of data.frames for each detector
   lapply(c(names(x@detectors), "event"), function(model) {
     rf <- getBanterModel(x, model) 
     if(is.null(rf)) return(NULL)
@@ -51,5 +54,7 @@ modelPctCorrect <- function(x) {
     dplyr::mutate(
       model = factor(.data$model, levels = c(names(x@detectors), "event"))
     ) %>% 
-    tidyr::spread("model", "pct.correct")
+    tidyr::pivot_wider(names_from = "model", values_from = "pct.correct") %>% 
+    dplyr::mutate(species = factor(.data$species, levels = c(spp, "Overall"))) %>% 
+    dplyr::arrange(.data$species)
 }

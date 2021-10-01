@@ -9,11 +9,12 @@ plotDetectorTrace(x, detector = NULL)
 \arguments{
 \item{x}{a \code{\link{banter_model}} object.}
 
-\item{detector}{names of models to plot. If set to \code{NULL}, traces for all
-models will be shown.}
+\item{detector}{names of models to plot. If set to \code{NULL}, traces for 
+all models will be shown.}
 }
 \description{
-Plot traces of OOB error rates for detector Random Forest models
+Plot traces of OOB error rates for detector Random Forest 
+  models.
 }
 \examples{
 data(train.data)
@@ -28,8 +29,14 @@ bant.mdl <- addBanterDetector(
 plotDetectorTrace(bant.mdl)
 
 }
+\references{
+Rankin, S. , Archer, F. , Keating, J. L., Oswald, J. N., 
+  Oswald, M. , Curtis, A. and Barlow, J. (2017), Acoustic classification 
+  of dolphins in the California Current using whistles, echolocation clicks, 
+  and burst pulses. Marine Mammal Science 33:520-540. doi:10.1111/mms.12381
+}
 \seealso{
-\code{\link[rfPermute]{plotRFtrace}}
+\code{\link[rfPermute]{plotTrace}}
 }
 \author{
 Eric Archer \email{eric.archer@noaa.gov}

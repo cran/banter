@@ -5,17 +5,6 @@
 \alias{banter_detector-class}
 \alias{banter_detector}
 \title{Detector classification model}
-\arguments{
-\item{name}{detector name}
-
-\item{detector.data}{measurement data for detections}
-
-\item{event.data}{data.frame associating event.id with species}
-
-\item{ntree}{number of trees in model}
-
-\item{sampsize}{number or fraction of samples to use in each tree}
-}
 \description{
 Create classification model for a detector
 }

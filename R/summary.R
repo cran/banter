@@ -18,6 +18,11 @@
 #'
 #' @author Eric Archer \email{eric.archer@@noaa.gov}
 #' 
+#' @references Rankin, S. , Archer, F. , Keating, J. L., Oswald, J. N., 
+#'   Oswald, M. , Curtis, A. and Barlow, J. (2017), Acoustic classification 
+#'   of dolphins in the California Current using whistles, echolocation clicks,
+#'   and burst pulses. Marine Mammal Science 33:520-540. doi:10.1111/mms.12381
+#' 
 #' @examples
 #' data(train.data)
 #' # initialize BANTER model with event data
@@ -57,10 +62,11 @@ summary.banter_model <- function(object, model = "event", n = 0.1, bins = 20, ..
       observed = round(summary(1 - (rf$oob.times / rf$ntree)), 3)
     ))
     cat("\nConfusion matrix:\n")
-    print(round(rfPermute::confusionMatrix(rf), 2))
+    print(rfPermute::confusionMatrix(rf))
     
     gridExtra::grid.arrange(
-      rfPermute::plotRFtrace(rf, plot = FALSE),
+      rfPermute::plotTrace(rf, plot = FALSE) + 
+        ggplot2::ylim(c(0, 1)),
       rfPermute::plotInbag(rf, sampsize = sampsize, bins = bins, plot = FALSE),
       nrow = 2
     )

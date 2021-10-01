@@ -3,11 +3,16 @@
 #' 
 #' @param x a \code{\link{banter_model}} object.
 #' @param model name of model to extract. Default is \code{"event"} 
-#'   to summarize the event-level model. Can also be name of a detector.
+#'   to extract the event-level model. Can also be the name of a detector.
 #' 
 #' @return a \code{\link{randomForest}} model object.
 #' 
 #' @author Eric Archer \email{eric.archer@@noaa.gov}
+#' 
+#' @references Rankin, S. , Archer, F. , Keating, J. L., Oswald, J. N., 
+#'   Oswald, M. , Curtis, A. and Barlow, J. (2017), Acoustic classification 
+#'   of dolphins in the California Current using whistles, echolocation clicks, 
+#'   and burst pulses. Marine Mammal Science 33:520-540. doi:10.1111/mms.12381
 #' 
 #' @examples
 #' data(train.data)
@@ -22,7 +27,6 @@
 #' bant.mdl <- runBanterModel(bant.mdl, ntree = 1000, sampsize = 1)
 #' 
 #' # extract the event randomForest model
-#' library(randomForest)
 #' event.rf <- getBanterModel(bant.mdl)
 #' event.rf
 #' 

@@ -1,5 +1,5 @@
 #' @title Number of Events
-#' @description Number of events in BANTER model by species.
+#' @description Return the number of events in a BANTER model by species.
 #' 
 #' @param x a \code{\link{banter_model}} object.
 #' 
@@ -8,6 +8,11 @@
 #'   to summarize the event-level model. Can also be name of a detector.
 #' 
 #' @author Eric Archer \email{eric.archer@@noaa.gov}
+#' 
+#' @references Rankin, S. , Archer, F. , Keating, J. L., Oswald, J. N., 
+#'   Oswald, M. , Curtis, A. and Barlow, J. (2017), Acoustic classification 
+#'   of dolphins in the California Current using whistles, echolocation clicks, 
+#'   and burst pulses. Marine Mammal Science 33:520-540. doi:10.1111/mms.12381
 #' 
 #' @examples
 #' data(train.data)
@@ -43,6 +48,6 @@ numEvents <- function(x, model = "event") {
   spp.fac <- factor(df$species, levels = sort(unique(x@data$species)))
   table(species = spp.fac) %>% 
     as.data.frame() %>% 
-    setNames(c("species", "num.events")) %>% 
+    stats::setNames(c("species", "num.events")) %>% 
     dplyr::mutate(species = as.character(.data$species)) 
 }

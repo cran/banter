@@ -4,7 +4,9 @@
 \name{test.data}
 \alias{test.data}
 \title{Testing events and detectors}
-\format{list}
+\format{
+list
+}
 \usage{
 data(test.data)
 }

@@ -1,20 +1,11 @@
 #' @title Detector classification model
 #' @description Create classification model for a detector
 #'
-#' @param name detector name
-#' @param detector.data measurement data for detections
-#' @param event.data data.frame associating event.id with species
-#' @param ntree number of trees in model
-#' @param sampsize number or fraction of samples to use in each tree
-#'
 #' @slot name detector name
 #' @slot ids data.frame of event.ids and call.ids for calls in detector
 #' @slot model classification model
 #'
 #' @author Eric Archer \email{eric.archer@@noaa.gov}
-#' 
-#' @importFrom methods setClass setValidity setMethod new
-#' @importFrom randomForest randomForest
 #' 
 #' @keywords internal
 #' 

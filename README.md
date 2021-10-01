@@ -1,3 +1,10 @@
+[![CRAN version](http://www.r-pkg.org/badges/version/banter?color=red)](https://cran.r-project.org/package=banter)
+[![CRAN last day downloads](http://cranlogs.r-pkg.org/badges/last-day/banter?color=red)](https://cran.r-project.org/package=banter)
+[![CRAN last week downloads](http://cranlogs.r-pkg.org/badges/last-week/banter?color=red)](https://cran.r-project.org/package=banter)
+[![CRAN last month downloads](http://cranlogs.r-pkg.org/badges/banter?color=red)](https://cran.r-project.org/package=banter)
+[![CRAN total downloads](http://cranlogs.r-pkg.org/badges/grand-total/banter?color=red)](https://cran.r-project.org/package=banter)
+[![R-CMD-check](https://github.com/EricArcher/banter/workflows/R-CMD-check/badge.svg)](https://github.com/EricArcher/banter/actions)
+
 # banter
 
 ### Description
@@ -9,15 +16,18 @@
 To install the latest version from GitHub:
 
 ```r
-# make sure you have Rtools installed
+# make sure you have devtools installed
 if(!require('devtools')) install.packages('devtools')
-# install from GitHub
+
+# install package from GitHub
 devtools::install_github('ericarcher/banter')
 ```
 
-### Tutorial
+### For a complete tutorial, run `banterGuide()`.
 
-The BANTER model is initialized with a data.frame of events. There is one row per event and it must have a column called `event.id` which is a unique id for each event, and a column called `species` which assigns each event to a given species. Every other column in the data.frame will be used as a predictor variable for the events.  
+### Quick Tutorial
+
+The BANTER (Bio-Acoustic eveNT classifiER) model is initialized with a data.frame of events. There is one row per event and it must have a column called `event.id` which is a unique id for each event, and a column called `species` which assigns each event to a given species. Every other column in the data.frame will be used as a predictor variable for the events.  
 In the package, an example data.frame is in the `train.data` example data list as the `$events` element.
 ```r
 data(train.data)
@@ -88,6 +98,15 @@ predict(bant.mdl, test.data)
 ### Reference
 Rankin, S., Archer, F., Keating, J. L., Oswald, J. N., Oswald, M., Curtis, A. and Barlow, J. (2017) Acoustic classification of dolphins in the California Current using whistles, echolocation clicks, and burst pulses. Mar Mam Sci, 33: 520-540. [doi:10.1111/mms.12381](https://onlinelibrary.wiley.com/doi/abs/10.1111/mms.12381)
 
-### version 0.9.2
+### version 0.9.4 (devel)
 
-* Initial release
+* Detector names and detector predictor column names submitted to `addBanterDetector()` are now first checked to make sure they are syntactically valid and unique by comparing them with the results from `make.names()`.
+* Detector names and detector predictor column names in `new.data` submitted to `predict()` are first checked to make sure at least one detector from model is present.
+* Detectors missing in `new.data` for `predict()` will automatically have all species detector probabilities and detector proportions set to 0.
+* Added validation option to `predict()` if `species` column exists in `new.data`
+* Default value for num.cores has been set to 1.
+* Added `banterGuide()`
+
+### version 0.9.3 (on CRAN)
+
+* Initial CRAN release

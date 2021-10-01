@@ -1,13 +1,18 @@
 #' @title Sample Size
-#' @description Return sample size used for a BANTER model.
+#' @description Return sample sizes used for a BANTER model.
 #' 
 #' @param x a \code{\link{banter_model}} object.
 #' @param model name of model to extract. Default is \code{"event"} 
-#'   to summarize the event-level model. Can also be name of a detector.
+#'   to return values for the event-level model. Can also be name of a detector.
 #' 
 #' @return a vector of sample sizes.
 #' 
 #' @author Eric Archer \email{eric.archer@@noaa.gov}
+#' 
+#' @references Rankin, S. , Archer, F. , Keating, J. L., Oswald, J. N., 
+#'   Oswald, M. , Curtis, A. and Barlow, J. (2017), Acoustic classification 
+#'   of dolphins in the California Current using whistles, echolocation clicks,
+#'   and burst pulses. Marine Mammal Science 33:520-540. doi:10.1111/mms.12381
 #' 
 #' @examples
 #' data(train.data)

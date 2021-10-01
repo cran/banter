@@ -10,7 +10,7 @@ getBanterModelData(x)
 \item{x}{a \code{\link{banter_model}} object.}
 }
 \value{
-a \code{\link{randomForest}} model object.
+the event data frame used to build the input model \code{x}.
 }
 \description{
 Extract BANTER event data used for the Random Forest model.
@@ -30,6 +30,12 @@ bant.mdl <- runBanterModel(bant.mdl, ntree = 1000, sampsize = 1)
 event.df <- getBanterModelData(bant.mdl)
 head(event.df)
 
+}
+\references{
+Rankin, S. , Archer, F. , Keating, J. L., Oswald, J. N., 
+  Oswald, M. , Curtis, A. and Barlow, J. (2017), Acoustic classification 
+  of dolphins in the California Current using whistles, echolocation clicks, 
+  and burst pulses. Marine Mammal Science 33:520-540. doi:10.1111/mms.12381
 }
 \author{
 Eric Archer \email{eric.archer@noaa.gov}

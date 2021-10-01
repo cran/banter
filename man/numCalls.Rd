@@ -15,7 +15,8 @@ propCalls(x, by = c("species", "event"))
 \item{by}{return summary by \code{"species"} or \code{"event"}.}
 }
 \description{
-Number and proportion of calls in BANTER detector models
+Return the number and proportion of calls in BANTER detector 
+  models.
 }
 \examples{
 data(train.data)
@@ -37,6 +38,12 @@ numCalls(bant.mdl, "event")
 propCalls(bant.mdl, "species")
 propCalls(bant.mdl, "event")
 
+}
+\references{
+Rankin, S. , Archer, F. , Keating, J. L., Oswald, J. N., 
+  Oswald, M. , Curtis, A. and Barlow, J. (2017), Acoustic classification 
+  of dolphins in the California Current using whistles, echolocation clicks, 
+  and burst pulses. Marine Mammal Science 33:520-540. doi:10.1111/mms.12381
 }
 \author{
 Eric Archer \email{eric.archer@noaa.gov}

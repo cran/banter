@@ -8,9 +8,6 @@
 #'
 #' @author Eric Archer \email{eric.archer@@noaa.gov}
 #' 
-#' @importFrom magrittr %>%
-#' @importFrom methods setClass setValidity setMethod
-#' 
 #' @keywords internal
 #' 
 banter_model <- methods::setClass(

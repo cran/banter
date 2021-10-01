@@ -7,15 +7,22 @@
 #'   a data.frame, then \code{name} must be provided.
 #' @param name detector name.
 #' @param ntree number of trees.
-#' @param sampsize number or fraction of samples to use in each tree.
+#' @param sampsize number or fraction of samples to use in each tree. If < 1, 
+#'   then it will be used to select this fraction of the smallest sample size.
 #' @param importance retain importance scores in model? Defaults to 
 #'   \code{FALSE} and will be ignored if \code{num.cores > 1}.
-#' @param num.cores number of cores to use for Random Forest model.
+#' @param num.cores number of cores to use for Random Forest model. Set to 
+#'   \code{NULL} to use the maximum number detected on your system - 1.
 #' 
 #' @return a \code{\link{banter_model}} object with the detector model added or 
 #'   removed.
 #' 
 #' @author Eric Archer \email{eric.archer@@noaa.gov}
+#' 
+#' @references Rankin, S., Archer, F., Keating, J. L., Oswald, J. N., 
+#'   Oswald, M. , Curtis, A. and Barlow, J. (2017), Acoustic classification 
+#'   of dolphins in the California Current using whistles, echolocation clicks, 
+#'   and burst pulses. Marine Mammal Science 33:520-540. doi:10.1111/mms.12381
 #' 
 #' @examples
 #' data(train.data)
@@ -34,12 +41,10 @@
 #' bant.mdl <- removeBanterDetector(bant.mdl, "bp")
 #' bant.mdl
 #' 
-#' @importFrom rlang .data
-#' @importFrom magrittr %>%
 #' @export
 #' 
 addBanterDetector <- function(x, data, name, ntree, sampsize = 1, 
-                              importance = FALSE, num.cores = NULL) {
+                              importance = FALSE, num.cores = 1) {
   # Check that detectors is a list
   if(is.null(x@detectors)) x@detectors <- list()
   
@@ -48,7 +53,12 @@ addBanterDetector <- function(x, data, name, ntree, sampsize = 1,
     if(is.null(names(data))) {
       stop("the list of detectors in 'data' must be named.")
     }
+    .checkValidStrings(names(data), "detector names")
     x@detectors[names(data)] <- sapply(names(data), function(detector) {
+      .checkValidStrings(
+        colnames(data[[detector]]), 
+        paste0("detector '", detector, "' column names")
+      )
       .runDetectorModel(
         x = x, data = data[[detector]], name = detector,
         ntree = ntree, sampsize = sampsize, importance = importance,
@@ -61,6 +71,8 @@ addBanterDetector <- function(x, data, name, ntree, sampsize = 1,
     if(missing(name)) {
       stop("'name' must be supplied with the 'data' data.frame")
     }
+    .checkValidStrings(name, "name")
+    .checkValidStrings(colnames(data), "column names")
     x@detectors[[name]] <- .runDetectorModel(
       x = x, data = data, name = name, 
       ntree = ntree, sampsize = sampsize, importance = importance,
@@ -84,14 +96,11 @@ removeBanterDetector <- function(x, name) {
   x
 }
 
-#' @importFrom parallel detectCores makeCluster clusterExport clusterEvalQ parLapply stopCluster mclapply
-#' @importFrom randomForest randomForest combine
-#' @importFrom utils sessionInfo
 #' @keywords internal
 #' 
 .runDetectorModel <- function(x, data, name, ntree, 
                               sampsize = 1, importance = FALSE, 
-                              num.cores = NULL) {
+                              num.cores = 1) {
   
   # Check that "event.id" and "call.id" exist
   if(!all(c("event.id", "call.id") %in% colnames(data))) {
@@ -104,6 +113,18 @@ removeBanterDetector <- function(x, name) {
     dplyr::inner_join(data, by = "event.id") %>% 
     dplyr::mutate(species = as.character(.data$species)) %>% 
     as.data.frame
+  
+  # Check if any columns need to be removed because of missing data
+  to.remove <- sapply(df, function(i) any(is.na(i)))
+  if(any(to.remove)) {
+    warning(
+      "in the '", name, 
+      "' detector, missing data found in the following columns: ",
+      paste(colnames(df)[to.remove], collapse = ", "), "\n",
+      "these columns will not be used in BANTER detector model."
+    )
+    df <- df[, !to.remove]
+  }
   
   # Get and check requested sample size
   sampsize <- .getSampsize(
@@ -134,34 +155,22 @@ removeBanterDetector <- function(x, name) {
     importance = importance & num.cores == 1
   )
   
-  # Don't use parallelizing if num.cores == 1
-  rf <- if(num.cores == 1) {
-    params$ntree <- ntree
-    .rfFuncDetector(params) 
-    
-  # Parallel random forest
-  } else {
-    # Create multicore rf function
-    .clRF <- function(i, params) .rfFuncDetector(params)
-    params$ntree <- ceiling(ntree / num.cores)
-    
-    # Run random forest on Linux or Macs using mclapply
-    rf.list <- if(Sys.info()[["sysname"]] %in% c("Linux", "Darwin")) {
-      parallel::mclapply(
-        1:num.cores, .clRF, params = params, mc.cores = num.cores
+  cl <- swfscMisc::setupClusters(num.cores)
+  rf <- tryCatch({
+    if(is.null(cl)) { # Don't parallelize if num.cores == 1
+      params$ntree <- ntree
+      .rfFuncDetector(params) 
+    } else { # Parallel random forest
+      # Create multicore rf function
+      params$ntree <- ceiling(ntree / num.cores)
+      parallel::clusterEvalQ(cl, require(randomForest))
+      parallel::clusterExport(cl, "params", environment())
+      rf.list <- parallel::parLapplyLB(
+        cl, 1:num.cores, function(i, p) .rfFuncDetector(p), p = params
       )
-      
-    # Run random forest using parLapply
-    } else {
-      tryCatch({
-        cl <- parallel::makeCluster(num.cores)
-        parallel::clusterEvalQ(cl, require(randomForest))
-        parallel::clusterExport(cl, "params", environment())
-        parallel::parLapply(cl, 1:num.cores, .clRF, params = params)
-      }, finally = parallel::stopCluster(cl))
+      do.call(randomForest::combine, rf.list)
     }
-    do.call(randomForest::combine, rf.list)
-  }
+  }, finally = if(!is.null(cl)) parallel::stopCluster(cl) else NULL)
   
   # Load banter_detector object
   banter_detector(
@@ -174,7 +183,6 @@ removeBanterDetector <- function(x, name) {
 
 #' Detector randomForest function
 #' @rdname internals
-#' @importFrom randomForest randomForest
 #' @keywords internal
 #' 
 .rfFuncDetector <- function(params) {

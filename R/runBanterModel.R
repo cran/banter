@@ -9,6 +9,11 @@
 #' 
 #' @author Eric Archer \email{eric.archer@@noaa.gov}
 #' 
+#' @references Rankin, S., Archer, F., Keating, J. L., Oswald, J. N., 
+#'   Oswald, M. , Curtis, A. and Barlow, J. (2017), Acoustic classification 
+#'   of dolphins in the California Current using whistles, echolocation clicks,
+#'   and burst pulses. Marine Mammal Science 33:520-540. doi:10.1111/mms.12381
+#' 
 #' @examples
 #' data(train.data)
 #' # initialize BANTER model with event data
@@ -22,10 +27,6 @@
 #' bant.mdl <- runBanterModel(bant.mdl, ntree = 1000, sampsize = 1)
 #' summary(bant.mdl)
 #' 
-#' @importFrom magrittr %>%
-#' @importFrom plyr .
-#' @importFrom rlang .data
-#' @importFrom stats complete.cases setNames
 #' @export
 #' 
 runBanterModel <- function(x, ntree, sampsize = 1) {
@@ -66,7 +67,11 @@ runBanterModel <- function(x, ntree, sampsize = 1) {
       df <- df %>% 
         dplyr::left_join(
           numCalls(x, "event") %>% 
-            tidyr::gather("detector", "num", -.data$event.id) %>% 
+            tidyr::pivot_longer(
+              -.data$event.id, 
+              names_to = "detector", 
+              values_to = "num"
+            ) %>% 
             dplyr::left_join(
               dplyr::select(df, "event.id", "duration"), 
               by = "event.id"
@@ -76,14 +81,14 @@ runBanterModel <- function(x, ntree, sampsize = 1) {
               num = .data$num / .data$duration
             ) %>% 
             dplyr::select(-.data$duration) %>% 
-            tidyr::spread("detector", "num"),
+            tidyr::pivot_wider(names_from = "detector", values_from = "num"),
           by = "event.id"
         )
     }
   }
       
   df <- df %>% 
-    dplyr::filter(complete.cases(.)) %>% 
+    stats::na.omit() %>% 
     dplyr::mutate(species = as.character(.data$species)) 
   
   # Get and check requested sample size
