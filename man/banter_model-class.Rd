@@ -18,6 +18,10 @@ Create classification model for events
 \item{\code{model.data}}{data used to create classification model}
 
 \item{\code{model}}{classification model}
+
+\item{\code{sampsize}}{sample size vector used in model}
+
+\item{\code{timestamp}}{start and stop times of model run}
 }}
 
 \author{

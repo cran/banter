@@ -8,9 +8,9 @@
 \usage{
 summary(object, ...)
 
-\method{summary}{banter_model}(object, model = "event", n = 0.1, bins = 20, ...)
+\method{summary}{banter_model}(object, model = "event", n = 0.5, bins = 20, ...)
 
-\S4method{summary}{banter_model}(object, model = "event", n = 0.1, bins = 20, ...)
+\S4method{summary}{banter_model}(object, model = "event", n = 0.5, bins = 20, ...)
 }
 \arguments{
 \item{object}{a \code{\link{banter_model}} object.}

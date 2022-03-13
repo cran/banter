@@ -2,8 +2,8 @@
 [![CRAN last day downloads](http://cranlogs.r-pkg.org/badges/last-day/banter?color=red)](https://cran.r-project.org/package=banter)
 [![CRAN last week downloads](http://cranlogs.r-pkg.org/badges/last-week/banter?color=red)](https://cran.r-project.org/package=banter)
 [![CRAN last month downloads](http://cranlogs.r-pkg.org/badges/banter?color=red)](https://cran.r-project.org/package=banter)
-[![CRAN total downloads](http://cranlogs.r-pkg.org/badges/grand-total/banter?color=red)](https://cran.r-project.org/package=banter)
-[![R-CMD-check](https://github.com/EricArcher/banter/workflows/R-CMD-check/badge.svg)](https://github.com/EricArcher/banter/actions)
+[![CRAN total downloads](http://cranlogs.r-pkg.org/badges/grand-total/banter?color=red)](https://cran.r-project.org/package=banter)  
+[![R-CMD-check](https://github.com/EricArcher/banter/workflows/R-CMD-check/badge.svg)](https://github.com/EricArcher/banter/actions)  
 
 # banter
 
@@ -27,7 +27,7 @@ devtools::install_github('ericarcher/banter')
 
 ### Quick Tutorial
 
-The BANTER (Bio-Acoustic eveNT classifiER) model is initialized with a data.frame of events. There is one row per event and it must have a column called `event.id` which is a unique id for each event, and a column called `species` which assigns each event to a given species. Every other column in the data.frame will be used as a predictor variable for the events.  
+The BANTER (Bio-Acoustic eveNT classifiER) model is initialized with a data frame of events. There is one row per event and it must have a column called `event.id` which is a unique id for each event, and a column called `species` which assigns each event to a given species. Every other column in the data.frame will be used as a predictor variable for the events.  
 In the package, an example data.frame is in the `train.data` example data list as the `$events` element.
 ```r
 data(train.data)
@@ -98,7 +98,15 @@ predict(bant.mdl, test.data)
 ### Reference
 Rankin, S., Archer, F., Keating, J. L., Oswald, J. N., Oswald, M., Curtis, A. and Barlow, J. (2017) Acoustic classification of dolphins in the California Current using whistles, echolocation clicks, and burst pulses. Mar Mam Sci, 33: 520-540. [doi:10.1111/mms.12381](https://onlinelibrary.wiley.com/doi/abs/10.1111/mms.12381)
 
-### version 0.9.4 (devel)
+### version 0.9.5 (devel)
+
+* add `subsampleDetections()` to draw a random number of detections per event
+* fixed `predict()` so that species names in `new.data` are modified using `make.names()` like they are in constructing the initial banter model.
+* added run timestamps to all models and changed `summary()` to display a matrix of all.
+* fixed trace and inbag plots in `summary()` and `plotDetectorTrace()`.
+
+
+### version 0.9.4 (on CRAN)
 
 * Detector names and detector predictor column names submitted to `addBanterDetector()` are now first checked to make sure they are syntactically valid and unique by comparing them with the results from `make.names()`.
 * Detector names and detector predictor column names in `new.data` submitted to `predict()` are first checked to make sure at least one detector from model is present.
@@ -107,6 +115,6 @@ Rankin, S., Archer, F., Keating, J. L., Oswald, J. N., Oswald, M., Curtis, A. an
 * Default value for num.cores has been set to 1.
 * Added `banterGuide()`
 
-### version 0.9.3 (on CRAN)
+### version 0.9.3
 
 * Initial CRAN release

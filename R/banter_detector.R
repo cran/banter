@@ -4,6 +4,8 @@
 #' @slot name detector name
 #' @slot ids data.frame of event.ids and call.ids for calls in detector
 #' @slot model classification model
+#' @slot sampsize sample size vector used in model
+#' @slot timestamp start and stop times of model run
 #'
 #' @author Eric Archer \email{eric.archer@@noaa.gov}
 #' 
@@ -15,7 +17,8 @@ banter_detector <- methods::setClass(
     name = "character",
     ids = "data.frame",
     model = "classifier",
-    sampsize = "numOrNull"
+    sampsize = "numOrNull",
+    timestamp = "dateOrNull"
   )
 )
 

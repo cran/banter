@@ -5,6 +5,8 @@
 #' @slot detectors list of \code{detector_model} objects
 #' @slot model.data data used to create classification model
 #' @slot model classification model
+#' @slot sampsize sample size vector used in model
+#' @slot timestamp start and stop times of model run
 #'
 #' @author Eric Archer \email{eric.archer@@noaa.gov}
 #' 
@@ -63,10 +65,31 @@ methods::setMethod(
       df <- dplyr::left_join(df, pct.correct, by = "species")
     }
     
-    if(!is.null(object@timestamp)) {
-      cat("Event model run completed at", format(object@timestamp))
+    detectors <- getDetectorNames(object)
+    if(length(detectors) > 0) {
+      run.time <- sapply(detectors, function(d) {
+        start <- object@detectors[[d]]@timestamp["start"]
+        end <- object@detectors[[d]]@timestamp["stop"]
+        c(format(start), format(end), format(round(difftime(end, start), 2)))
+      })
+      event.ts <- object@timestamp
+      if(!is.null(event.ts)) {
+        event.time <- c(
+          start = format(event.ts["start"]),
+          end = format(event.ts["stop"]),
+          run.time = format(
+            round(difftime(event.ts["stop"], event.ts["start"]), 2)
+          )
+        )
+        run.time <- cbind(run.time, event = event.time)
+      }
+      rownames(run.time) <- c("start", "stop", "run.time")
+      cat("Model run times:\n")
+      print(t(run.time))
+      cat("\n")
     }
-    cat("\nNumber of events and model classification rate:\n")
+
+    cat("Number of events and model classification rate:\n")
     print(df, digits = 4)
   }
 )

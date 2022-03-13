@@ -37,17 +37,24 @@ plotDetectorTrace <- function(x, detector = NULL) {
   }
   
   traces <- lapply(detector, function(d) {
-    tr <- rfPermute::plotTrace(getBanterModel(x, d), FALSE)
-    tr + 
-      ggplot2::ylim(c(0, 1)) +
+    rf <- getBanterModel(x, d)
+    if(is.null(rf$err.rate)) return(NULL)
+    tr <- rfPermute::plotTrace(rf, plot = FALSE)
+    tr +
+      ggplot2::ylim(c(0, 100)) +
       ggplot2::ggtitle(d) +
       ggplot2::theme(axis.title = ggplot2::element_blank())
   })
-  traces$ncol <- 1
-  traces$bottom <- "Trees"
-  traces$left = "Error"
+  traces <- traces[!sapply(traces, is.null)]
   
-  do.call(gridExtra::grid.arrange, traces)
+  if(length(traces) > 0) {
+    traces$ncol <- 1
+    traces$bottom <- "Trees"
+    traces$left = "Error"
+    do.call(gridExtra::grid.arrange, traces)
+  } else {
+    message("\nNo trace information available - detector models were likely run over multiple cores.")
+  }
   
   invisible(NULL)
 }

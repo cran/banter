@@ -107,6 +107,8 @@ removeBanterDetector <- function(x, name) {
     stop("'data' for detector ", name, " must have 'event.id' and 'call.id' columns")
   }
   
+  start <- Sys.time()
+  
   # Combine event data with call ids in detector
   df <- x@data %>% 
     dplyr::select(.data$event.id, .data$species) %>% 
@@ -177,7 +179,8 @@ removeBanterDetector <- function(x, name) {
     name = name,
     ids = df[, c("event.id", "call.id")], 
     model = rf,
-    sampsize = sampsize
+    sampsize = sampsize,
+    timestamp = c(start = start, stop = Sys.time())
   ) 
 }
 

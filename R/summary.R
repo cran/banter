@@ -44,46 +44,62 @@ methods::setGeneric("summary")
 #' @method summary banter_model
 #' @export 
 #' 
-summary.banter_model <- function(object, model = "event", n = 0.1, bins = 20, ...) {  
+summary.banter_model <- function(object, model = "event", n = 0.50, bins = 20, ...) {  
   print(object)
+  
   rf <- getBanterModel(object, model)
-  if(!is.null(rf)) {  
-    sampsize <- if(model == "event") {
-      object@sampsize
-    } else {
-      object@detectors[[model]]@sampsize
-    } 
-    
-    cat("\nDistribution of percent correctly classified overall in last 'n' trees:\n")
-    print(round(.rfPctCorrectSmry(rf, n) * 100, 2))
-    cat("\nSample inbag rate distribution:\n") 
-    print(rbind(
-      expected = round(summary(as.vector(sampsize / table(rf$y))), 3),
-      observed = round(summary(1 - (rf$oob.times / rf$ntree)), 3)
-    ))
-    cat("\nConfusion matrix:\n")
-    print(rfPermute::confusionMatrix(rf))
-    
-    gridExtra::grid.arrange(
-      rfPermute::plotTrace(rf, plot = FALSE) + 
-        ggplot2::ylim(c(0, 1)),
-      rfPermute::plotInbag(rf, sampsize = sampsize, bins = bins, plot = FALSE),
-      nrow = 2
+  if(is.null(rf)) return(invisible(NULL))
+  
+  message("\n<< Summary for \"", model, "\" model >>")
+  
+  ntree <- rf$ntree
+  cat("\nNumber of trees:", ntree, "\n")
+  sampsize <- getSampSize(object, model = model)
+  cat("\nSample sizes:\n")
+  print(sampsize)
+  
+  err.rate <- rf$err.rate
+  trace <- if(!is.null(err.rate)) {
+    if(dplyr::between(n, 0, 1)) n <- ceiling(n * ntree)
+    if(n > ntree) n <- ntree
+    cat(
+      "\nDistribution of percent correctly classified overall in last ", 
+      n, " (", round(n / ntree, 2) * 100, "%) trees:\n",
+      sep = ""
     )
+    correct <- 1 - err.rate[(ntree - n + 1):ntree, "OOB"]
+    print(round(summary(correct * 100), 3))
+    rfPermute::plotTrace(rf, plot = FALSE) + 
+      ggplot2::ylim(c(0, 100))
+  } else {
+    message("\nNo trace information available - detector models were likely run over multiple cores.")
+    NULL
   }
+  
+  cat("\nSample inbag proportion distribution:\n") 
+  print(rbind(
+    expected = round(summary(as.vector(sampsize / table(rf$y))), 3) * 100,
+    observed = round(summary(1 - (rf$oob.times / ntree)), 3) * 100
+  ))
+  
+  cat("\nConfusion matrix:\n")
+  print(rfPermute::confusionMatrix(rf))
+  cat("\n")
+  
+  suppressWarnings({
+    inbag <- rfPermute::plotInbag(
+      rf, bins = bins, replace = FALSE, sampsize = sampsize, plot = FALSE
+    ) +
+      ggplot2::xlim(c(0, 100))
+    if(is.null(trace)) print(inbag) else {
+      gridExtra::grid.arrange(trace, inbag, nrow = 2)
+    } 
+  })
+  
+  invisible(NULL)
 }
 
 #' @name summary
 #' @rdname summary
 #' @aliases summary,banter_model-method
 methods::setMethod("summary", "banter_model", summary.banter_model) 
-
-#' @rdname internals
-#' @keywords internal
-#' 
-.rfPctCorrectSmry <- function(rf, n = 0.1) {
-  x <- rf$err.rate
-  if(dplyr::between(n, 0, 1)) n <- ceiling(n * nrow(x))
-  correct <- 1 - x[(nrow(x) - n + 1):nrow(x), "OOB"]
-  c(n = length(correct), round(summary(correct), 3))
-}

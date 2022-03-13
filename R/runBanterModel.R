@@ -32,6 +32,8 @@
 runBanterModel <- function(x, ntree, sampsize = 1) {
   .stopIfNoDetectors(x)
   
+  x@timestamp <- c(start = Sys.time())
+  
   # Proportion of calls by event
   detector.prop <- propCalls(x, "event")
   
@@ -113,7 +115,7 @@ runBanterModel <- function(x, ntree, sampsize = 1) {
   )
   x@sampsize <- sampsize
   
-  x@timestamp <- Sys.time()
+  x@timestamp["stop"] <- Sys.time()
   
   x
 }

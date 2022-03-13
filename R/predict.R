@@ -212,8 +212,8 @@ predict.banter_model <- function(object, new.data, ...) {
   
   if("species" %in% colnames(df)) {
     result$predict.df <- dplyr::mutate(
-      result$predict.df, 
-      original = as.character(df$species),
+      result$predict.df,
+      original = make.names(df$species, allow_ = FALSE),
       correct = .data$original == .data$predicted
     )
     conf.df <- result$predict.df

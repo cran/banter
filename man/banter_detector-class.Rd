@@ -16,6 +16,10 @@ Create classification model for a detector
 \item{\code{ids}}{data.frame of event.ids and call.ids for calls in detector}
 
 \item{\code{model}}{classification model}
+
+\item{\code{sampsize}}{sample size vector used in model}
+
+\item{\code{timestamp}}{start and stop times of model run}
 }}
 
 \author{
