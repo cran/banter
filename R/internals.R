@@ -51,10 +51,12 @@
   freq <- if(is.table(x)) x else table(x)
   
   if(length(freq) < 2) {
-    stop(
+    warning(
       warn.label, " has ", length(freq), 
-      " species (need at least 2 for model)"
+      " species (need at least 2 for model)",
+      call. = FALSE, immediate. = TRUE
     )
+    return(NULL)
   }
   
   n <- if(n >= 1) n else round(min(freq) * n, 0)
@@ -64,13 +66,14 @@
   good.freq <- freq[freq > n]
   
   if(length(good.freq) < 2) {
-    stop(
+    warning(
       warn.label, ":\n",
       "sampsize = ", n,
       " is >= too many species frequencies (need at least 2 for model):\n",
       paste0("  ", names(freq), ": ", freq, "\n", collapse = ""),
-      call. = FALSE
+      call. = FALSE, immediate. = TRUE
     )
+    return(NULL)
   } else if(length(bad.freq) > 0) {
     warning(
       warn.label, ": sampsize = ", n, " is >= species frequencies:\n",

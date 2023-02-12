@@ -54,7 +54,7 @@ addBanterDetector <- function(x, data, name, ntree, sampsize = 1,
       stop("the list of detectors in 'data' must be named.")
     }
     .checkValidStrings(names(data), "detector names")
-    x@detectors[names(data)] <- sapply(names(data), function(detector) {
+    new.detectors <- sapply(names(data), function(detector) {
       .checkValidStrings(
         colnames(data[[detector]]), 
         paste0("detector '", detector, "' column names")
@@ -65,7 +65,10 @@ addBanterDetector <- function(x, data, name, ntree, sampsize = 1,
         num.cores = num.cores
       )
     }, simplify = FALSE)
-  
+    new.detectors <- new.detectors[!sapply(new.detectors, is.null)]
+    if(length(new.detectors) > 0) {
+      x@detectors[names(new.detectors)] <- new.detectors
+    }
   # If data is a data.frame
   } else if(methods::is(data, "data.frame")) {
     if(missing(name)) {
@@ -73,15 +76,18 @@ addBanterDetector <- function(x, data, name, ntree, sampsize = 1,
     }
     .checkValidStrings(name, "name")
     .checkValidStrings(colnames(data), "column names")
-    x@detectors[[name]] <- .runDetectorModel(
+    new.detector <- .runDetectorModel(
       x = x, data = data, name = name, 
       ntree = ntree, sampsize = sampsize, importance = importance,
       num.cores = num.cores
     )
+    if(!is.null(new.detector)) x@detectors[[name]] <- new.detector
   } else stop("'data' must be a list or data.frame.")
   
   # Sort detectors and empty event model info
-  x@detectors <- x@detectors[order(names(x@detectors))]
+  if(length(x@detectors) > 1) {
+    x@detectors <- x@detectors[order(names(x@detectors))]
+  }
   x@model.data <- x@model <- x@sampsize <- x@timestamp <- NULL
   x
 }
@@ -132,8 +138,9 @@ removeBanterDetector <- function(x, name) {
   sampsize <- .getSampsize(
     df$species,
     sampsize,
-    paste0("Detector model (", name, ")")
+    paste0("Detector model '", name, "'")
   )
+  if(is.null(sampsize)) return(NULL)
 
   # Remove missing species and format columns
   df <- df %>%

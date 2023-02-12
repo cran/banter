@@ -1,13 +1,13 @@
 citHeader("To cite \'banter\' in publications use:")
 
-citEntry(
-  entry = "Article",
+bibentry(
+  bibtype = "Article",
   textVersion = "Rankin, S., Archer, F., Keating, J. L., Oswald, J. N., Oswald, M., Curtis, A. and Barlow, J. (2017) Acoustic classification of dolphins in the California Current using whistles, echolocation clicks, and burst pulses. Mar Mam Sci, 33: 520-540. doi:10.1111/mms.12381",
-  author = personList(
+  author = c(
     person("Shannon", "Rankin"),
     person("Frederick", "Archer"),
-    person("Jennifer", "Keating", middle = "L."),
-    person("Julie", "Oswald", middle = "N."),
+    person("Jennifer L.", "Keating"),
+    person("Julie N.", "Oswald"),
     person("Alex", "Curtis"),
     person("Jay", "Barlow")
   ),

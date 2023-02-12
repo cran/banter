@@ -39,10 +39,11 @@ runBanterModel <- function(x, ntree, sampsize = 1) {
   
   # Mean votes
   detector.votes <- sapply(x@detectors, function(d) {
-    votes <- d@model$votes %>% 
-      prop.table(1) %>% 
-      as.data.frame() 
-    cbind(event.id = d@ids$event.id, votes, stringsAsFactors = FALSE)
+    cbind(
+      event.id = d@ids$event.id, 
+      as.data.frame(d@model$votes / rowSums(d@model$votes)), 
+      stringsAsFactors = FALSE
+    )
   }, simplify = FALSE) %>% 
     .meanVotes()
   
@@ -95,6 +96,7 @@ runBanterModel <- function(x, ntree, sampsize = 1) {
   
   # Get and check requested sample size
   sampsize <- .getSampsize(df$species, sampsize, "Event model")
+  if(is.null(sampsize)) return(x)
   
   # Remove species with insufficient sample sizes and finish data format
   x@model.data <- df %>% 

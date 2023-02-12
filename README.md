@@ -98,15 +98,18 @@ predict(bant.mdl, test.data)
 ### Reference
 Rankin, S., Archer, F., Keating, J. L., Oswald, J. N., Oswald, M., Curtis, A. and Barlow, J. (2017) Acoustic classification of dolphins in the California Current using whistles, echolocation clicks, and burst pulses. Mar Mam Sci, 33: 520-540. [doi:10.1111/mms.12381](https://onlinelibrary.wiley.com/doi/abs/10.1111/mms.12381)
 
-### version 0.9.5 (devel)
+### version 0.9.6 (devel)
+
+* changed behavior of `addBanterDetector()` to provide a warning instead of an error if a detector didn't have enough detections of a species and add all detectors that were valid.  
+
+### version 0.9.5 (on CRAN)
 
 * add `subsampleDetections()` to draw a random number of detections per event
 * fixed `predict()` so that species names in `new.data` are modified using `make.names()` like they are in constructing the initial banter model.
 * added run timestamps to all models and changed `summary()` to display a matrix of all.
 * fixed trace and inbag plots in `summary()` and `plotDetectorTrace()`.
 
-
-### version 0.9.4 (on CRAN)
+### version 0.9.4
 
 * Detector names and detector predictor column names submitted to `addBanterDetector()` are now first checked to make sure they are syntactically valid and unique by comparing them with the results from `make.names()`.
 * Detector names and detector predictor column names in `new.data` submitted to `predict()` are first checked to make sure at least one detector from model is present.
