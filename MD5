@@ -1,4 +1,4 @@
-bc5f2fa2c40069e083a16f40b1602365 *DESCRIPTION
+9f48f16453ec4ccb59549b96990e2160 *DESCRIPTION
 1cd518ac32e7eb8bd09d9ca1f1100997 *NAMESPACE
 e4e424a5967ff2198f000b2cbfb3aa84 *R/addBanterDetector.R
 743ae5c214c0c681fcd96d60a00c843c *R/banter-package.R
@@ -18,8 +18,8 @@ c91c5f31e064a2426ba005c98f059b05 *R/numEvents.R
 837fa55f7233bbb3d36bd74f430ffd2f *R/predict.R
 28f2be6ce40789da61122a92387a7ae3 *R/runBanterModel.R
 e50346de3192b6277cdb69400afc7c63 *R/subsampleDetections.R
-949444f3b64b7c04955c58a5364dd649 *R/summary.R
-33ee824d64acd8263310db6d112c3aea *README.md
+e6cf4bb416df718c93064748a231da16 *R/summary.R
+ab2084551ad8a96a18c7eb812893530e *README.md
 39a320a4eec9b77ca7f24e20a6c30bf8 *data/datalist
 eda6b55559dc15ad83b8cd32eba72b06 *data/test.data.rdata
 e24c03606009e448288a455476384df1 *data/train.data.rdata

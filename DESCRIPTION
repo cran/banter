@@ -4,7 +4,7 @@ Title: BioAcoustic eveNT classifiER
 Description: Create a hierarchical acoustic event species classifier out of  
   multiple call type detectors as described in 
   Rankin et al (2017) <doi:10.1111/mms.12381>.
-Version: 0.9.8
+Version: 0.9.81
 Authors@R: c(
   EA = person("Eric", "Archer", email = "eric.ivan.archer@gmail.com", role = c("aut", "cre")),
   SR = person("Shannon", "Rankin", email = "shannon.rankin@noaa.gov", role = c("aut")))
@@ -17,12 +17,12 @@ Imports: dplyr (>= 1.0.6), ggplot2 (>= 3.3.3), gridExtra (>= 2.3),
         1.1.1)
 Suggests: testthat
 License: GNU General Public License
-RoxygenNote: 7.3.2
 Encoding: UTF-8
+Config/roxygen2/version: 8.1.1
 NeedsCompilation: no
-Packaged: 2025-06-11 04:11:32 UTC; eric
+Packaged: 2026-11-01 18:51:29 UTC; eric
 Author: Eric Archer [aut, cre],
   Shannon Rankin [aut]
 Maintainer: Eric Archer <eric.ivan.archer@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-06-11 11:00:17 UTC
+Date/Publication: 2026-11-01 19:00:02 UTC
